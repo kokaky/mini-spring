@@ -43,6 +43,12 @@ public class CglibAopProxy implements AopProxy {
 		}
 
 		@Override
+		/**
+		 * object:被代理类
+		 * 被代理类的方法
+		 * 参数
+		 * methodProxy
+		 */
 		public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
 			CglibMethodInvocation methodInvocation = new CglibMethodInvocation(advised.getTargetSource().getTarget(), method, objects, methodProxy);
 			if (advised.getMethodMatcher().matches(method, advised.getTargetSource().getTarget().getClass())) {
@@ -53,6 +59,11 @@ public class CglibAopProxy implements AopProxy {
 		}
 	}
 
+	/**
+	 * CglibMethodInvocation扩展ReflectiveMethodInvocation 类 来支持CGLIB代理
+	 * 主要是覆盖了 invokeJoinpoint（）方法，如果有MethodProxy对象
+	 * 则通过调用MethodProxy#invoke方法，否则通过反射调用
+	 */
 	private static class CglibMethodInvocation extends ReflectiveMethodInvocation {
 
 		private final MethodProxy methodProxy;

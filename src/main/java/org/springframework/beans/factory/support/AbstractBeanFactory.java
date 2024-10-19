@@ -26,9 +26,11 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
 	@Override
 	public Object getBean(String name) throws BeansException {
+		// 先看单例的缓存中是否有
 		Object sharedInstance = getSingleton(name);
 		if (sharedInstance != null) {
-			//如果是FactoryBean，从FactoryBean#getObject中创建bean
+			//如果是FactoryBean，从FactoryBean#getObject中创建bean，
+			// 如果有，则根据是否实现了FactoryBean接口 进行创建实例返回
 			return getObjectForBeanInstance(sharedInstance, name);
 		}
 

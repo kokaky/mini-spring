@@ -21,6 +21,7 @@ public class SimpleApplicationEventMulticaster extends AbstractApplicationEventM
 	@Override
 	public void multicastEvent(ApplicationEvent event) {
 		for (ApplicationListener<ApplicationEvent> applicationListener : applicationListeners) {
+			// 检查当前传的event，是否有对应的监听器来处理
 			if (supportsEvent(applicationListener, event)) {
 				applicationListener.onApplicationEvent(event);
 			}
@@ -35,7 +36,9 @@ public class SimpleApplicationEventMulticaster extends AbstractApplicationEventM
 	 * @return
 	 */
 	protected boolean supportsEvent(ApplicationListener<ApplicationEvent> applicationListener, ApplicationEvent event) {
+		// 取得监听器的实现接口
 		Type type = applicationListener.getClass().getGenericInterfaces()[0];
+		// getActualTypeArguments()[0]返回泛型类
 		Type actualTypeArgument = ((ParameterizedType) type).getActualTypeArguments()[0];
 		String className = actualTypeArgument.getTypeName();
 		Class<?> eventClassName;
@@ -44,6 +47,7 @@ public class SimpleApplicationEventMulticaster extends AbstractApplicationEventM
 		} catch (ClassNotFoundException e) {
 			throw new BeansException("wrong event class name: " + className);
 		}
+		// 判断eventClassName（接口中的泛型event类）和传递过来的event类是不是同一个类型
 		return eventClassName.isAssignableFrom(event.getClass());
 	}
 }

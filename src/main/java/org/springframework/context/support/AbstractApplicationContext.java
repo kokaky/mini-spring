@@ -30,8 +30,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
 
 	@Override
 	public void refresh() throws BeansException {
-		//创建BeanFactory，并加载BeanDefinition
+		//创建BeanFactory，并加载BeanDefinition——只是将xml文件中的bean节点读给BeanDefinition
+		// 并把bean容器赋值给属性，下一句来获取这个容器
 		refreshBeanFactory();
+		// 得到这个Bean容器 BeanFactory
 		ConfigurableListableBeanFactory beanFactory = getBeanFactory();
 
 		//添加ApplicationContextAwareProcessor，让继承自ApplicationContextAware的bean能感知bean
@@ -92,7 +94,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
 	 */
 	protected void initApplicationEventMulticaster() {
 		ConfigurableListableBeanFactory beanFactory = getBeanFactory();
+		// 给AbstractApplicationContext的属性applicationEventMulticaster赋值，赋一个监听器实现类实例值
+		//以BeanFactory为参数
 		applicationEventMulticaster = new SimpleApplicationEventMulticaster(beanFactory);
+		// 并添加到单例容器的map缓存中
 		beanFactory.addSingleton(APPLICATION_EVENT_MULTICASTER_BEAN_NAME, applicationEventMulticaster);
 	}
 
@@ -100,6 +105,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
 	 * 注册事件监听器
 	 */
 	protected void registerListeners() {
+		// getBeansOfType:获取实现了对应类型（ApplicationListener）的所有的bean
 		Collection<ApplicationListener> applicationListeners = getBeansOfType(ApplicationListener.class).values();
 		for (ApplicationListener applicationListener : applicationListeners) {
 			applicationEventMulticaster.addApplicationListener(applicationListener);
